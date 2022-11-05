@@ -1,6 +1,7 @@
 package jpabook.jpashop.main;
 
 import jpabook.jpashop.domain.Book;
+import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 
@@ -20,6 +21,7 @@ public class JpaMain {
 
         try{
 
+            /*
             // 양방향
             Order order = new Order();
             em.persist(order);
@@ -37,6 +39,26 @@ public class JpaMain {
             book.setName("JPA");
             book.setAuthor("김영한");
             em.persist(book);
+            */
+
+            // 영속성 전이
+            OrderItem orderItemA = new OrderItem();
+            OrderItem orderItemB = new OrderItem();
+
+            Order order2 = new Order();
+            order2.addOrderItem(orderItemA);
+            order2.addOrderItem(orderItemB);
+            em.persist(order2);
+
+            // 지연 로딩
+            em.flush();
+            em.clear();
+
+            System.out.println("==================");
+            OrderItem findOrderItem = em.find(OrderItem.class, orderItemA.getId());
+            System.out.println("findOrderItem = " + findOrderItem.getOrder().getClass());
+            System.out.println("==================");
+            System.out.println("getOrderDate = " + findOrderItem.getOrder().getOrderDate());
 
             tx.commit();
         } catch (Exception e){
